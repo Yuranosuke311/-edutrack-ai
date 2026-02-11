@@ -1,3 +1,6 @@
+// 層: レイアウト層
+// 責務: アプリ全体のHTML骨組みと共通スタイル(globals.css)の適用
+
 import "./globals.css";
 import type { ReactNode } from "react";
 

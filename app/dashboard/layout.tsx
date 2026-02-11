@@ -1,3 +1,6 @@
+// 層: レイアウト層 (ダッシュボードエリア専用)
+// 責務: ログイン後ダッシュボード配下の共通ヘッダーとコンテンツ枠の提供
+
 import type { ReactNode } from "react";
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {

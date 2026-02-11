@@ -1,3 +1,6 @@
+// 層: コンポーネント層 (ダッシュボードUI)
+// 責務: Supabaseから取得した統計情報をカード形式で表示
+
 export default function DashboardStats() {
   // TODO: Supabase から統計情報を取得して表示
   return (

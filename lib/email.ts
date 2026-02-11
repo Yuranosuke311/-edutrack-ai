@@ -1,3 +1,6 @@
+// 層: lib層 (外部サービス連携)
+// 責務: Resend等のメールサービスを用いて保護者向けフィードバックメールを送信する処理
+
 export async function sendFeedbackEmail(
   to: string,
   content: string

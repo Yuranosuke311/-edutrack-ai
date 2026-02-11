@@ -1,3 +1,6 @@
+// 層: ページ層 (認証)
+// 責務: 教師/管理者ユーザーの新規登録フォームとSupabase Auth＋usersテーブル登録の入口
+
 "use client";
 
 import { FormEvent, useState } from "react";

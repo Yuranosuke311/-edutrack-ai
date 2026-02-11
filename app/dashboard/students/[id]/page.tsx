@@ -1,5 +1,9 @@
+// 層: ページ層 (ダッシュボード)
+// 責務: 個々の生徒に紐づく出席・成績・AIフィードバック操作のハブ画面
+
 import AttendanceList from "@/components/students/AttendanceList";
 import GradeList from "@/components/students/GradeList";
+import FeedbackPanel from "@/components/students/FeedbackPanel";
 
 interface Props {
   params: { id: string };
@@ -20,9 +24,15 @@ export default function StudentDetailPage({ params }: Props) {
           <h2 className="mb-2 text-sm font-semibold">出席履歴</h2>
           <AttendanceList studentId={id} />
         </div>
-        <div>
-          <h2 className="mb-2 text-sm font-semibold">成績履歴</h2>
-          <GradeList studentId={id} />
+        <div className="space-y-4">
+          <div>
+            <h2 className="mb-2 text-sm font-semibold">成績履歴</h2>
+            <GradeList studentId={id} />
+          </div>
+          <div>
+            <h2 className="mb-2 text-sm font-semibold">AIフィードバック</h2>
+            <FeedbackPanel studentId={id} />
+          </div>
         </div>
       </section>
     </div>

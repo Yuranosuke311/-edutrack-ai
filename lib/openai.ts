@@ -1,3 +1,6 @@
+// 層: lib層 (外部APIクライアント)
+// 責務: OpenAI API を用いて保護者向けフィードバック文を生成するロジックの集約
+
 import OpenAI from "openai";
 
 const apiKey = process.env.OPENAI_API_KEY;

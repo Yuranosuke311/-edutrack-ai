@@ -1,3 +1,6 @@
+// 層: ページ層 (ダッシュボード)
+// 責務: RLSされたSupabaseデータを元に生徒一覧を表示する入口
+
 import StudentTable from "@/components/students/StudentTable";
 
 export default function StudentsPage() {

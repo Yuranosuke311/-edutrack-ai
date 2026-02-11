@@ -1,3 +1,6 @@
+// 層: ページ層 (認証)
+// 責務: ログインフォームの表示とSupabase Authによるサインイン処理
+
 "use client";
 
 import { FormEvent, useState } from "react";

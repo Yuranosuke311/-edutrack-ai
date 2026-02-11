@@ -1,3 +1,6 @@
+// 層: ページ層 (ダッシュボード)
+// 責務: ログイン後トップ画面として統計情報や概要を表示
+
 import DashboardStats from "@/components/DashboardStats";
 
 export default function DashboardPage() {

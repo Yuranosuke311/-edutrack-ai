@@ -1,3 +1,6 @@
+// 層: types層 (ドメインモデル)
+// 責務: Supabase上のテーブル構造に対応するTypeScript型定義を集約
+
 export type Role = "teacher" | "admin";
 
 export interface User {

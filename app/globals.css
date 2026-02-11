@@ -1,3 +1,6 @@
+/* 層: グローバルスタイル層
+   責務: Tailwindのベース設定とアプリ全体に共通する最低限のスタイル定義 */
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

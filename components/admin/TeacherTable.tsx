@@ -1,3 +1,6 @@
+// 層: コンポーネント層 (管理者UI)
+// 責務: 教師ユーザー一覧を表示し、将来的に追加・編集・削除操作のUIを提供
+
 // TODO: Supabase から教師一覧を取得する
 const dummyTeachers = [
   { id: "t1", name: "管理者 太郎", email: "admin@example.com", role: "admin" },

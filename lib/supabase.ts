@@ -1,3 +1,6 @@
+// 層: lib層 (インフラ / クライアント生成)
+// 責務: ブラウザ・サーバー両方で利用するSupabaseクライアントの生成
+
 import { createBrowserClient, createServerClient } from "@supabase/ssr";
 
 export function createSupabaseBrowserClient() {

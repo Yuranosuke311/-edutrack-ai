@@ -1,3 +1,6 @@
+// 層: コンポーネント層 (生徒管理UI)
+// 責務: 指定生徒の成績履歴一覧を表示し、将来的に成績追加・編集UIを提供
+
 interface Props {
   studentId: string;
 }

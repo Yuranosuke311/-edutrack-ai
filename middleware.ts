@@ -1,3 +1,6 @@
+// 層: ミドルウェア層
+// 責務: 認証が必要なルートへのアクセス制御や共通前処理（将来Supabaseセッションのチェックを実装）
+
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 

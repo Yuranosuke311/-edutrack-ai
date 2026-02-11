@@ -1,3 +1,6 @@
+// 層: ページ層 (ルートページ)
+// 責務: アプリ概要の表示とログイン画面への導線
+
 export default function HomePage() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-center gap-6 px-4">

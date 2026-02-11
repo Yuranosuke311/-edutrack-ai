@@ -1,3 +1,6 @@
+// 層: コンポーネント層 (生徒管理UI)
+// 責務: 指定生徒の出席履歴一覧を表示し、将来的に追加・編集操作のUIを提供
+
 interface Props {
   studentId: string;
 }

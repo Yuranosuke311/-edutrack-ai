@@ -1,3 +1,6 @@
+// 層: ページ層 (管理者)
+// 責務: 管理者のみがアクセスする教師管理や全体統計へのエントリーポイント
+
 import TeacherTable from "@/components/admin/TeacherTable";
 
 export default function AdminPage() {
