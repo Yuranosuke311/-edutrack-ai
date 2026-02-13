@@ -11,6 +11,7 @@ interface Props {
 
 export default function FeedbackPanel({ studentId }: Props) {
   const [content, setContent] = useState<string>("");
+  const [feedbackId, setFeedbackId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -18,10 +19,21 @@ export default function FeedbackPanel({ studentId }: Props) {
     setError(null);
     setLoading(true);
     try {
-      // TODO: /api/feedback/generate に student_id を渡して呼び出し
-      // const res = await fetch("/api/feedback/generate", { ... });
-      // const data = await res.json();
-      // setContent(data.content);
+      const res = await fetch("/api/feedback/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ student_id: studentId }),
+      });
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => null);
+        throw new Error(data?.error?.message ?? "生成APIの呼び出しに失敗しました");
+      }
+
+      const data = (await res.json()) as { content: string };
+      setContent(data.content ?? "");
+      // 新規生成時はまだDBに保存されていないので、feedbackIdはクリアしておく
+      setFeedbackId(null);
     } catch (e) {
       setError("フィードバック生成中にエラーが発生しました");
     } finally {
@@ -30,11 +42,56 @@ export default function FeedbackPanel({ studentId }: Props) {
   }
 
   async function handleSave() {
-    // TODO: /api/feedback にPOSTして content を保存
+    setError(null);
+    setLoading(true);
+    try {
+      if (!content.trim()) {
+        setError("保存するフィードバック内容がありません。");
+        return;
+      }
+
+      const res = await fetch("/api/feedback", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ student_id: studentId, content }),
+      });
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => null);
+        throw new Error(data?.error?.message ?? "保存APIの呼び出しに失敗しました");
+      }
+
+      const data = (await res.json()) as { id: string };
+      setFeedbackId(data.id);
+    } catch (e) {
+      setError("フィードバック保存中にエラーが発生しました");
+    } finally {
+      setLoading(false);
+    }
   }
 
   async function handleSend() {
-    // TODO: /api/feedback/{id}/send を呼び出してメール送信
+    setError(null);
+    setLoading(true);
+    try {
+      if (!feedbackId) {
+        setError("まずフィードバックを保存してから送信してください。");
+        return;
+      }
+
+      const res = await fetch(`/api/feedback/${feedbackId}/send`, {
+        method: "POST",
+      });
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => null);
+        throw new Error(data?.error?.message ?? "送信APIの呼び出しに失敗しました");
+      }
+    } catch (e) {
+      setError("フィードバック送信中にエラーが発生しました");
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (

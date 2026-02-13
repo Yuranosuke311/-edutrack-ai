@@ -9,6 +9,7 @@ export interface User {
   email: string;
   role: Role;
   created_at: string;
+  updated_at: string;
 }
 
 export interface Student {
@@ -20,6 +21,7 @@ export interface Student {
   parent_email: string | null;
   memo: string | null;
   created_at: string;
+  updated_at: string;
 }
 
 export interface Attendance {
@@ -48,6 +50,8 @@ export interface Feedback {
   content: string;
   sent: boolean;
   sent_at: string | null;
+   // メール送信時の実際の送信先アドレス（トレーサビリティ確保）
+  sent_to_email: string | null;
   created_by: string;
   created_at: string;
 }
