@@ -2,27 +2,18 @@
 // 責務: ログイン後ダッシュボード配下の共通ヘッダーとコンテンツ枠の提供
 
 import type { ReactNode } from "react";
+import DashboardNavbar from "@/components/DashboardNavbar";
+import { getCurrentProfile } from "@/lib/profile";
+import { Container } from "react-bootstrap";
 
-export default function DashboardLayout({ children }: { children: ReactNode }) {
+export default async function DashboardLayout({ children }: { children: ReactNode }) {
+  const profile = await getCurrentProfile();
+  const isAdmin = profile?.role === "admin";
+
   return (
-    <div className="min-h-screen bg-slate-50">
-      <header className="border-b bg-white">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
-          <div className="text-sm font-semibold">EduTrack AI</div>
-          <nav className="flex items-center gap-3 text-xs text-slate-600">
-            <a href="/dashboard" className="hover:text-slate-900">
-              ダッシュボード
-            </a>
-            <a href="/dashboard/students" className="hover:text-slate-900">
-              生徒一覧
-            </a>
-            <a href="/dashboard/admin" className="hover:text-slate-900">
-              管理者メニュー
-            </a>
-          </nav>
-        </div>
-      </header>
-      <main className="mx-auto max-w-6xl px-4 py-6">{children}</main>
+    <div className="min-vh-100 bg-light">
+      <DashboardNavbar isAdmin={isAdmin} />
+      <Container className="py-4">{children}</Container>
     </div>
   );
 }

@@ -1,15 +1,10 @@
 // 層: lib層 (認可/認証ヘルパー)
 // 責務: Route Handlerなどサーバー側でログイン必須の処理に対するユーザー取得・UNAUTHORIZED判定
 
-import { NextRequest } from "next/server";
-import { createSupabaseServerClient } from "./supabase";
+import { createSupabaseServerClient } from "./supabase-server";
 
-export async function requireAuth(req: NextRequest) {
-  const supabase = createSupabaseServerClient(() => {
-    const cookieHeader = req.headers.get("cookie") ?? "";
-    const entries = cookieHeader.split(";").map((c) => c.trim().split("="));
-    return Object.fromEntries(entries.filter(([k]) => k));
-  });
+export async function requireAuth() {
+  const supabase = createSupabaseServerClient();
 
   const {
     data: { user },
@@ -17,7 +12,6 @@ export async function requireAuth(req: NextRequest) {
 
   if (!user) {
     const error = new Error("UNAUTHORIZED");
-    // @ts-expect-error custom
     (error as any).code = "UNAUTHORIZED";
     throw error;
   }

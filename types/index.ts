@@ -3,7 +3,8 @@
 
 export type Role = "teacher" | "admin";
 
-export interface User {
+// profiles テーブル（Auth と 1:1）
+export interface Profile {
   id: string;
   name: string;
   email: string;
@@ -12,11 +13,15 @@ export interface User {
   updated_at: string;
 }
 
+// 後方互換性のため User もエクスポート（将来的に削除予定）
+export type User = Profile;
+
+// students テーブル
 export interface Student {
   id: string;
   name: string;
   grade_level: string | null;
-  teacher_id: string | null;
+  teacher_id: string | null; // FK → profiles.id
   student_email: string | null;
   parent_email: string | null;
   memo: string | null;
@@ -44,15 +49,15 @@ export interface Grade {
   created_at: string;
 }
 
+// feedbacks テーブル
 export interface Feedback {
   id: string;
-  student_id: string;
+  student_id: string; // FK → students.id
   content: string;
   sent: boolean;
   sent_at: string | null;
-   // メール送信時の実際の送信先アドレス（トレーサビリティ確保）
-  sent_to_email: string | null;
-  created_by: string;
+  send_to_email: string | null; // メール送信時の実際の送信先アドレス（トレーサビリティ確保）
+  created_by: string; // FK → profiles.id
   created_at: string;
 }
 

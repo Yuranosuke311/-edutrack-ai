@@ -4,59 +4,121 @@
 "use client";
 
 import { FormEvent, useState } from "react";
+import { useRouter } from "next/navigation";
+import { createSupabaseBrowserClient } from "@/lib/supabase";
+import { Container, Card, Form, Button, Alert } from "react-bootstrap";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
-    // TODO: Supabase Auth ログイン処理を実装
+    setError(null);
+    setLoading(true);
+
+    try {
+      const supabase = createSupabaseBrowserClient();
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (signInError) {
+        // エラーメッセージを日本語に変換
+        let errorMessage = "ログインに失敗しました";
+        if (signInError.message.includes("Invalid login credentials")) {
+          errorMessage = "メールアドレスまたはパスワードが正しくありません";
+        } else if (signInError.message.includes("Email not confirmed")) {
+          errorMessage = "メールアドレスの確認が完了していません";
+        } else if (
+          signInError.message.includes("rate limit") ||
+          signInError.message.includes("Rate limit") ||
+          signInError.message.includes("too many requests") ||
+          signInError.message.includes("Too many requests")
+        ) {
+          errorMessage =
+            "メール送信のレート制限に達しました。しばらく時間をおいてから再度お試しください。";
+        } else if (
+          signInError.message.includes("once every") ||
+          signInError.message.includes("60 seconds")
+        ) {
+          errorMessage =
+            "メール送信は60秒に1回までです。しばらく時間をおいてから再度お試しください。";
+        } else {
+          errorMessage = signInError.message;
+        }
+        setError(errorMessage);
+        return;
+      }
+
+      // ログイン成功時はダッシュボードへリダイレクト
+      router.push("/dashboard");
+      router.refresh();
+    } catch (e) {
+      setError("予期せぬエラーが発生しました");
+      console.error(e);
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center px-4">
-      <div className="w-full max-w-md rounded-lg bg-white p-6 shadow">
-        <h1 className="mb-6 text-xl font-semibold">ログイン</h1>
-        <form className="space-y-4" onSubmit={handleSubmit}>
-          <div className="space-y-1">
-            <label className="block text-sm font-medium text-slate-700">
-              メールアドレス
-            </label>
-            <input
-              type="email"
-              className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-slate-500 focus:outline-none"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-          </div>
-          <div className="space-y-1">
-            <label className="block text-sm font-medium text-slate-700">
-              パスワード
-            </label>
-            <input
-              type="password"
-              className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-slate-500 focus:outline-none"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-          </div>
-          <button
-            type="submit"
-            className="w-full rounded-md bg-slate-900 px-3 py-2 text-sm font-medium text-white hover:bg-slate-800"
-          >
-            ログイン
-          </button>
-        </form>
-        <p className="mt-4 text-center text-xs text-slate-500">
-          アカウントをお持ちでない方は{" "}
-          <a href="/auth/signup" className="text-slate-900 underline">
-            新規登録
-          </a>
-        </p>
-      </div>
-    </main>
+    <Container fluid className="d-flex min-vh-100 align-items-center justify-content-center bg-light">
+      <Card className="w-100" style={{ maxWidth: "400px" }}>
+        <Card.Body className="p-4">
+          <Card.Title as="h1" className="mb-4 text-center">ログイン</Card.Title>
+
+          {error && (
+            <Alert variant="danger" className="mb-3">
+              {error}
+            </Alert>
+          )}
+
+          <Form onSubmit={handleSubmit}>
+            <Form.Group className="mb-3">
+              <Form.Label>メールアドレス</Form.Label>
+              <Form.Control
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                placeholder="example@email.com"
+              />
+            </Form.Group>
+
+            <Form.Group className="mb-3">
+              <Form.Label>パスワード</Form.Label>
+              <Form.Control
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                placeholder="パスワードを入力"
+              />
+            </Form.Group>
+
+            <Button
+              variant="primary"
+              type="submit"
+              disabled={loading}
+              className="w-100 mb-3"
+            >
+              {loading ? "ログイン中..." : "ログイン"}
+            </Button>
+          </Form>
+
+          <p className="text-center text-muted mb-0">
+            アカウントをお持ちでない方は{" "}
+            <a href="/auth/signup" className="text-decoration-none">
+              新規登録
+            </a>
+          </p>
+        </Card.Body>
+      </Card>
+    </Container>
   );
 }

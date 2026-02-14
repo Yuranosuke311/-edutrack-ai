@@ -4,7 +4,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { sendFeedbackEmail } from "@/lib/email";
 import { requireAuth } from "@/lib/auth";
-import { createSupabaseServerClient } from "@/lib/supabase";
+import { createSupabaseServerClient } from "@/lib/supabase-server";
 
 interface Params {
   params: { id: string };
@@ -15,17 +15,13 @@ export async function POST(req: NextRequest, { params }: Params) {
   const { id } = params;
 
   try {
-    await requireAuth(req);
+    await requireAuth();
 
-    const supabase = createSupabaseServerClient(() => {
-      const cookieHeader = req.headers.get("cookie") ?? "";
-      const entries = cookieHeader.split(";").map((c) => c.trim().split("="));
-      return Object.fromEntries(entries.filter(([k]) => k));
-    });
+    const supabase = createSupabaseServerClient();
 
     const { data: feedback, error: feedbackError } = await supabase
       .from("feedbacks")
-      .select("id, student_id, content, sent, sent_at")
+      .select("id, student_id, content, sent, sent_at, send_to_email")
       .eq("id", id)
       .single();
 
@@ -87,7 +83,7 @@ export async function POST(req: NextRequest, { params }: Params) {
       .update({
         sent: true,
         sent_at: now,
-        sent_to_email: to,
+        send_to_email: to, // 設計書に合わせて send_to_email に統一
       })
       .eq("id", id);
 

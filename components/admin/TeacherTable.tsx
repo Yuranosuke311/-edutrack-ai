@@ -9,25 +9,31 @@ const dummyTeachers = [
 
 export default function TeacherTable() {
   return (
-    <div className="overflow-hidden rounded-lg border bg-white">
-      <table className="min-w-full text-left text-sm">
-        <thead className="bg-slate-50 text-xs text-slate-500">
-          <tr>
-            <th className="px-4 py-2">氏名</th>
-            <th className="px-4 py-2">メールアドレス</th>
-            <th className="px-4 py-2">ロール</th>
-          </tr>
-        </thead>
-        <tbody>
-          {dummyTeachers.map((t) => (
-            <tr key={t.id} className="border-t">
-              <td className="px-4 py-2">{t.name}</td>
-              <td className="px-4 py-2">{t.email}</td>
-              <td className="px-4 py-2 text-xs uppercase">{t.role}</td>
+    <div className="card shadow-sm">
+      <div className="card-body p-0">
+        <table className="table table-hover mb-0">
+          <thead className="table-light">
+            <tr>
+              <th>氏名</th>
+              <th>メールアドレス</th>
+              <th>ロール</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {dummyTeachers.map((t) => (
+              <tr key={t.id}>
+                <td>{t.name}</td>
+                <td>{t.email}</td>
+                <td>
+                  <span className={`badge bg-${t.role === "admin" ? "primary" : "secondary"}`}>
+                    {t.role === "admin" ? "管理者" : "教師"}
+                  </span>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

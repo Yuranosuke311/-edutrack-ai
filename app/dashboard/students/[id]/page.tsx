@@ -13,28 +13,30 @@ export default function StudentDetailPage({ params }: Props) {
   const { id } = params;
   // TODO: id を用いてサーバーコンポーネントで生徒情報を取得
   return (
-    <div className="space-y-6">
-      <section>
-        <h1 className="text-xl font-semibold">生徒詳細</h1>
-        <p className="mt-2 text-sm text-slate-600">生徒ID: {id}</p>
+    <div>
+      <section className="mb-4">
+        <h1 className="h3 mb-2">生徒詳細</h1>
+        <p className="text-muted mb-0">
+          生徒ID: <span className="badge bg-secondary">{id}</span>
+        </p>
         {/* TODO: 生徒基本情報・担当教師情報を表示 */}
       </section>
-      <section className="grid gap-6 md:grid-cols-2">
-        <div>
-          <h2 className="mb-2 text-sm font-semibold">出席履歴</h2>
+      <div className="row g-4">
+        <div className="col-md-6">
+          <h2 className="h5 mb-3">出席履歴</h2>
           <AttendanceList studentId={id} />
         </div>
-        <div className="space-y-4">
-          <div>
-            <h2 className="mb-2 text-sm font-semibold">成績履歴</h2>
+        <div className="col-md-6">
+          <div className="mb-4">
+            <h2 className="h5 mb-3">成績履歴</h2>
             <GradeList studentId={id} />
           </div>
           <div>
-            <h2 className="mb-2 text-sm font-semibold">AIフィードバック</h2>
+            <h2 className="h5 mb-3">AIフィードバック</h2>
             <FeedbackPanel studentId={id} />
           </div>
         </div>
-      </section>
+      </div>
     </div>
   );
 }

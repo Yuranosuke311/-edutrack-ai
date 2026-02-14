@@ -8,12 +8,14 @@ interface Props {
 export default function GradeList({ studentId }: Props) {
   // TODO: studentId を使って Supabase から成績を取得
   return (
-    <div className="overflow-hidden rounded-lg border bg-white">
-      <div className="px-4 py-2 text-xs text-slate-500">
-        成績履歴（生徒ID: {studentId}）
+    <div className="card shadow-sm">
+      <div className="card-header">
+        成績履歴 <span className="badge bg-secondary">{studentId.slice(0, 8)}...</span>
       </div>
-      <div className="px-4 py-4 text-sm text-slate-500">
-        成績データはまだ実装されていません。
+      <div className="card-body">
+        <div className="alert alert-info mb-0" role="alert">
+          成績データはまだ実装されていません。
+        </div>
       </div>
     </div>
   );

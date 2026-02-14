@@ -4,6 +4,7 @@
 "use client";
 
 import { useState } from "react";
+import { Card, Button, Form, Alert, Badge } from "react-bootstrap";
 
 interface Props {
   studentId: string;
@@ -95,50 +96,55 @@ export default function FeedbackPanel({ studentId }: Props) {
   }
 
   return (
-    <div className="overflow-hidden rounded-lg border bg-white">
-      <div className="flex items-center justify-between border-b px-4 py-2">
-        <div className="text-xs text-slate-500">
-          フィードバック生成（生徒ID: {studentId}）
+    <Card className="shadow-sm">
+      <Card.Header className="d-flex justify-content-between align-items-center">
+        <div className="text-muted small">
+          フィードバック生成 <Badge bg="secondary">{studentId.slice(0, 8)}...</Badge>
         </div>
-        <button
-          type="button"
+        <Button
+          variant="primary"
+          size="sm"
           onClick={handleGenerate}
           disabled={loading}
-          className="rounded bg-slate-900 px-3 py-1 text-xs font-medium text-white hover:bg-slate-800 disabled:opacity-60"
         >
           {loading ? "生成中..." : "AIで生成"}
-        </button>
-      </div>
+        </Button>
+      </Card.Header>
       {error && (
-        <div className="border-b border-red-200 bg-red-50 px-4 py-2 text-xs text-red-700">
+        <Alert variant="danger" className="mb-0 rounded-0">
           {error}
-        </div>
+        </Alert>
       )}
-      <div className="space-y-2 px-4 py-3">
-        <textarea
-          className="h-40 w-full resize-none rounded border border-slate-200 px-2 py-1 text-sm focus:border-slate-500 focus:outline-none"
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-          placeholder="ここにAIが生成したフィードバック文が表示されます"
-        />
-        <div className="flex justify-end gap-2">
-          <button
-            type="button"
+      <Card.Body>
+        <Form.Group className="mb-3">
+          <Form.Control
+            as="textarea"
+            rows={8}
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            placeholder="ここにAIが生成したフィードバック文が表示されます"
+          />
+        </Form.Group>
+        <div className="d-flex justify-content-end gap-2">
+          <Button
+            variant="outline-secondary"
+            size="sm"
             onClick={handleSave}
-            className="rounded border border-slate-300 px-3 py-1 text-xs text-slate-700 hover:bg-slate-50"
+            disabled={loading || !content.trim()}
           >
             保存
-          </button>
-          <button
-            type="button"
+          </Button>
+          <Button
+            variant="success"
+            size="sm"
             onClick={handleSend}
-            className="rounded bg-emerald-600 px-3 py-1 text-xs font-medium text-white hover:bg-emerald-500"
+            disabled={loading || !feedbackId}
           >
             メール送信
-          </button>
+          </Button>
         </div>
-      </div>
-    </div>
+      </Card.Body>
+    </Card>
   );
 }
 

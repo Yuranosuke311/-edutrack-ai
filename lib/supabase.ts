@@ -18,7 +18,7 @@ export function createSupabaseServerClient(cookies: () => Record<string, string>
       getAll() {
         return Object.entries(cookies()).map(([name, value]) => ({ name, value }));
       },
-      setAll(cookiesToSet) {
+      setAll(cookiesToSet: Array<{ name: string; value: string; options?: any }>): void {
         cookiesToSet.forEach(() => {
           // Next.jsのRoute Handler / Server Component側で実装予定
         });

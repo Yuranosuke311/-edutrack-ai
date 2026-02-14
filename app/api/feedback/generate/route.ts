@@ -4,13 +4,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { generateFeedback } from "@/lib/openai";
 import { requireAuth } from "@/lib/auth";
-import { createSupabaseServerClient } from "@/lib/supabase";
+import { createSupabaseServerClient } from "@/lib/supabase-server";
 
 // POST /api/feedback/generate
 // body: { student_id: string }
 export async function POST(req: NextRequest) {
   try {
-    await requireAuth(req);
+    await requireAuth();
 
     const body = await req.json().catch(() => null);
     const studentId = body?.student_id as string | undefined;
@@ -27,11 +27,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const supabase = createSupabaseServerClient(() => {
-      const cookieHeader = req.headers.get("cookie") ?? "";
-      const entries = cookieHeader.split(";").map((c) => c.trim().split("="));
-      return Object.fromEntries(entries.filter(([k]) => k));
-    });
+    const supabase = createSupabaseServerClient();
 
     // 生徒情報の取得（存在確認 & 名前取得）
     const { data: student, error: studentError } = await supabase

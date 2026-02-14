@@ -2,7 +2,7 @@
 // 責務: フィードバックの保存・一覧取得などfeedbacksテーブルへのCRUDの入口
 
 import { NextRequest, NextResponse } from "next/server";
-import { createSupabaseServerClient } from "@/lib/supabase";
+import { createSupabaseServerClient } from "@/lib/supabase-server";
 import { requireAuth } from "@/lib/auth";
 
 // POST /api/feedback
@@ -10,7 +10,7 @@ import { requireAuth } from "@/lib/auth";
 // フィードバックの保存（LLMで生成されたcontentをfeedbacksテーブルにINSERT）
 export async function POST(req: NextRequest) {
   try {
-    const user = await requireAuth(req);
+    const user = await requireAuth();
 
     const body = await req.json().catch(() => null);
     const studentId = body?.student_id as string | undefined;
@@ -28,11 +28,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const supabase = createSupabaseServerClient(() => {
-      const cookieHeader = req.headers.get("cookie") ?? "";
-      const entries = cookieHeader.split(";").map((c) => c.trim().split("="));
-      return Object.fromEntries(entries.filter(([k]) => k));
-    });
+    const supabase = createSupabaseServerClient();
 
     const { data, error } = await supabase
       .from("feedbacks")
