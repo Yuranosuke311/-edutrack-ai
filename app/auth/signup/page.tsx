@@ -24,10 +24,11 @@ export default function SignupPage() {
     try {
       const supabase = createSupabaseBrowserClient();
 
-      // 1. Supabase Authでサインアップ
+      // 1. Supabase Authでサインアップ（name は DB トリガーで profiles に反映される）
       const { data: authData, error: signUpError } = await supabase.auth.signUp({
         email,
         password,
+        options: { data: { name } },
       });
 
       if (signUpError) {
@@ -62,27 +63,19 @@ export default function SignupPage() {
         return;
       }
 
-      // 2. profilesテーブルにレコードを追加（デフォルトでteacherロール）
-      const { error: insertError } = await supabase.from("profiles").insert({
-        id: authData.user.id,
-        name,
-        email,
-        role: "teacher", // 新規登録時はデフォルトでteacher
-      });
+      // #region agent log
+      fetch('http://127.0.0.1:7242/ingest/8f1bfecd-27ef-4e6a-839e-e640c6ddd7ae',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'signup/page.tsx:signup',message:'signup done',data:{hasUser:!!authData.user,hasSession:!!authData.session},timestamp:Date.now(),hypothesisId:'H1'})}).catch(()=>{});
+      // #endregion
+      // 2. profiles は auth.users の INSERT トリガー（handle_new_user）で自動作成されるためここでは挿入しない
 
-      if (insertError) {
-        setError("ユーザー情報の登録に失敗しました: " + insertError.message);
-        console.error(insertError);
-        return;
-      }
-
-      // 登録成功時はダッシュボードへリダイレクト
-      router.push("/dashboard");
-      router.refresh();
+      // 登録成功時はダッシュボードへリダイレクト（フル遷移でセッション確実に送る）
+      await supabase.auth.getSession();
+      await new Promise((r) => setTimeout(r, 150));
+      window.location.replace("/dashboard");
+      return;
     } catch (e) {
       setError("予期せぬエラーが発生しました");
       console.error(e);
-    } finally {
       setLoading(false);
     }
   }

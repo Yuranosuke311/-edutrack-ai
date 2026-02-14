@@ -2,14 +2,21 @@
 // 責務: ログイン後トップ画面として統計情報や概要を表示
 
 import DashboardStats from "@/components/DashboardStats";
+import DashboardAuthGuard from "@/components/DashboardAuthGuard";
 import { getCurrentProfile } from "@/lib/profile";
-import { redirect } from "next/navigation";
 
 export default async function DashboardPage() {
   const profile = await getCurrentProfile();
-  
+
+  // サーバーでプロフィールが取れない場合（ログイン直後でクッキーが届いていない等）は
+  // クライアントでセッション確認 → refresh または /auth/login へ。307 で即リダイレクトしない。
   if (!profile) {
-    redirect("/auth/login");
+    return (
+      <div>
+        <h1 className="h3 mb-4">ダッシュボード</h1>
+        <DashboardAuthGuard />
+      </div>
+    );
   }
 
   const isAdmin = profile.role === "admin";

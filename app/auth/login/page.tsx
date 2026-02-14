@@ -52,16 +52,23 @@ export default function LoginPage() {
           errorMessage = signInError.message;
         }
         setError(errorMessage);
+        setLoading(false);
         return;
       }
 
-      // ログイン成功時はダッシュボードへリダイレクト
-      router.push("/dashboard");
-      router.refresh();
+      const { data: sessionData } = await supabase.auth.getSession();
+      await new Promise((r) => setTimeout(r, 150));
+      const userId = sessionData?.session?.user?.id;
+      const { data: profile } = userId ? await supabase.from("profiles").select("role").eq("id", userId).single() : { data: null };
+      const role = profile?.role ?? "teacher";
+      // #region agent log
+      fetch('http://127.0.0.1:7242/ingest/8f1bfecd-27ef-4e6a-839e-e640c6ddd7ae',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'login/page.tsx:login',message:'login done',data:{role},timestamp:Date.now(),hypothesisId:'H2'})}).catch(()=>{});
+      // #endregion
+      window.location.replace(role === "admin" ? "/dashboard/admin" : "/dashboard");
+      return;
     } catch (e) {
       setError("予期せぬエラーが発生しました");
       console.error(e);
-    } finally {
       setLoading(false);
     }
   }
