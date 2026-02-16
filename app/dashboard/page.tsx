@@ -1,15 +1,14 @@
 // 層: ページ層 (ダッシュボード)
-// 責務: ログイン後トップ画面として統計情報や概要を表示
+// 責務: ログイン後トップ画面として統計とカレンダーを1ページに統合表示
 
 import DashboardStats from "@/components/DashboardStats";
+import CalendarView from "@/components/dashboard/CalendarView";
 import DashboardAuthGuard from "@/components/DashboardAuthGuard";
 import { getCurrentProfile } from "@/lib/profile";
 
 export default async function DashboardPage() {
   const profile = await getCurrentProfile();
 
-  // サーバーでプロフィールが取れない場合（ログイン直後でクッキーが届いていない等）は
-  // クライアントでセッション確認 → refresh または /auth/login へ。307 で即リダイレクトしない。
   if (!profile) {
     return (
       <div>
@@ -32,6 +31,9 @@ export default async function DashboardPage() {
         </div>
       </div>
       <DashboardStats role={profile.role} />
+      <div className="mt-4">
+        <CalendarView />
+      </div>
     </div>
   );
 }

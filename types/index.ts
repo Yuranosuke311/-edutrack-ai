@@ -49,6 +49,15 @@ export interface Grade {
   created_at: string;
 }
 
+// lessons テーブル（定期的な授業スケジュール・admin登録・日時指定）
+export interface Lesson {
+  id: string;
+  lesson_at: string; // ISO 8601 timestamptz
+  teacher_id: string; // FK → profiles.id
+  title: string | null;
+  created_at: string;
+}
+
 // feedbacks テーブル
 export interface Feedback {
   id: string;

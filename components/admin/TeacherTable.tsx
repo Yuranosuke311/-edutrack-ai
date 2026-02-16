@@ -1,13 +1,29 @@
 // 層: コンポーネント層 (管理者UI)
-// 責務: 教師ユーザー一覧を表示し、将来的に追加・編集・削除操作のUIを提供
+// 責務: 教師ユーザー一覧を表示（Supabase profiles から取得）
 
-// TODO: Supabase から教師一覧を取得する
-const dummyTeachers = [
-  { id: "t1", name: "管理者 太郎", email: "admin@example.com", role: "admin" },
-  { id: "t2", name: "教師 花子", email: "teacher@example.com", role: "teacher" },
-];
+import { createSupabaseServerClient } from "@/lib/supabase-server";
+import { getCurrentProfile } from "@/lib/profile";
 
-export default function TeacherTable() {
+export default async function TeacherTable() {
+  const profile = await getCurrentProfile();
+  if (!profile || profile.role !== "admin") return null;
+
+  const supabase = createSupabaseServerClient();
+  const { data: teachers, error } = await supabase
+    .from("profiles")
+    .select("id, name, email, role")
+    .order("created_at", { ascending: true });
+
+  if (error) {
+    return (
+      <div className="alert alert-danger mb-0">教師一覧の取得に失敗しました。</div>
+    );
+  }
+
+  if (!teachers?.length) {
+    return <div className="alert alert-info mb-0">登録されている教師はいません。</div>;
+  }
+
   return (
     <div className="card shadow-sm">
       <div className="card-body p-0">
@@ -20,7 +36,7 @@ export default function TeacherTable() {
             </tr>
           </thead>
           <tbody>
-            {dummyTeachers.map((t) => (
+            {teachers.map((t) => (
               <tr key={t.id}>
                 <td>{t.name}</td>
                 <td>{t.email}</td>

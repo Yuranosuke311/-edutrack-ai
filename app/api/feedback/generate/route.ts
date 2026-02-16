@@ -85,9 +85,17 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    console.error(err);
+    console.error("Feedback generation error:", err);
+
+    const message =
+      err?.message === "OPENAI_API_KEY が設定されていません"
+        ? "OpenAI API キーが設定されていません。.env.local に OPENAI_API_KEY を設定してください。"
+        : err?.message?.includes("API key")
+        ? "OpenAI API キーが無効です。"
+        : "フィードバック生成に失敗しました。";
+
     return NextResponse.json(
-      { error: { code: "GENERATION_FAILED", message: "フィードバック生成に失敗しました。" } },
+      { error: { code: "GENERATION_FAILED", message } },
       { status: 500 }
     );
   }
