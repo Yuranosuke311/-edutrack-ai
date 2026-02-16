@@ -20,11 +20,13 @@ NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
 SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 
-# OpenAI API Key（https://platform.openai.com/api-keys から取得）
-OPENAI_API_KEY=your-openai-key
+# Gemini API Key（https://aistudio.google.com/apikey から取得）
+GEMINI_API_KEY=your-gemini-api-key
 
-# Resend API Key（メール送信機能で使用。後で設定可）
-# RESEND_API_KEY=
+# Resend（メール送信。https://resend.com/api-keys でキー発行）
+RESEND_API_KEY=re_xxxx
+# 本番ではドメイン認証後、送信元を指定（例: EduTrack <noreply@yourdomain.com>）
+# RESEND_FROM=EduTrack AI <onboarding@resend.dev>
 ```
 
 ### 3. Supabase データベースのセットアップ
@@ -43,14 +45,14 @@ npm run dev
 
 ブラウザで `http://localhost:3000` を開いてください。
 
-## OpenAI API Key の取得方法
+## Gemini API Key の取得方法
 
-1. [OpenAI Platform](https://platform.openai.com/) にアクセス
-2. アカウントを作成（またはログイン）
-3. 「API keys」→「Create new secret key」をクリック
-4. 生成されたキーをコピーして `.env.local` の `OPENAI_API_KEY` に設定
+1. [Google AI Studio](https://aistudio.google.com/apikey) にアクセス
+2. Google アカウントでログイン
+3. 「Create API key」でキーを発行
+4. 生成されたキーをコピーして `.env.local` の `GEMINI_API_KEY` に設定
 
-**注意**: キーは一度しか表示されないため、必ずコピーして安全に保管してください。
+**注意**: キーは安全に保管し、リポジトリにコミットしないでください。
 
 ## Vercel へのデプロイ
 

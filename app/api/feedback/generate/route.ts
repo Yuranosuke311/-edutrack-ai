@@ -2,7 +2,7 @@
 // 責務: 生徒の出席・成績データを集約し、OpenAIクライアントを通じてフィードバック文を生成して返す
 
 import { NextRequest, NextResponse } from "next/server";
-import { generateFeedback } from "@/lib/openai";
+import { generateFeedback } from "@/lib/gemini";
 import { requireAuth } from "@/lib/auth";
 import { createSupabaseServerClient } from "@/lib/supabase-server";
 
@@ -88,10 +88,12 @@ export async function POST(req: NextRequest) {
     console.error("Feedback generation error:", err);
 
     const message =
-      err?.message === "OPENAI_API_KEY が設定されていません"
-        ? "OpenAI API キーが設定されていません。.env.local に OPENAI_API_KEY を設定してください。"
-        : err?.message?.includes("API key")
-        ? "OpenAI API キーが無効です。"
+      err?.message === "GEMINI_API_KEY が設定されていません"
+        ? "Gemini API キーが設定されていません。.env.local に GEMINI_API_KEY を設定してください。"
+        : err?.message?.includes("API key") || err?.message?.includes("apiKey")
+        ? "Gemini API キーが無効です。"
+        : err?.status === 429 || err?.code === "insufficient_quota" || err?.code === "RESOURCE_EXHAUSTED"
+        ? "Gemini の利用枠を超えているか、クレジットがありません。プラン・支払い設定を確認してください。"
         : "フィードバック生成に失敗しました。";
 
     return NextResponse.json(

@@ -1,15 +1,11 @@
 // 層: lib層 (外部APIクライアント)
-// 責務: OpenAI API を用いて保護者向けフィードバック文を生成するロジックの集約
+// 責務: Gemini API を用いて保護者向けフィードバック文を生成するロジックの集約
 
-import OpenAI from "openai";
+import { GoogleGenAI } from "@google/genai";
 
-const apiKey = process.env.OPENAI_API_KEY;
+const apiKey = process.env.GEMINI_API_KEY;
 
-const client = apiKey
-  ? new OpenAI({
-      apiKey,
-    })
-  : null;
+const client = apiKey ? new GoogleGenAI({ apiKey }) : null;
 
 interface FeedbackGenerationParams {
   studentName: string;
@@ -20,7 +16,7 @@ interface FeedbackGenerationParams {
 
 export async function generateFeedback(params: FeedbackGenerationParams) {
   if (!client) {
-    throw new Error("OPENAI_API_KEY が設定されていません");
+    throw new Error("GEMINI_API_KEY が設定されていません");
   }
 
   const { studentName, attendances, grades, maxTokens = 800 } = params;
@@ -30,6 +26,8 @@ export async function generateFeedback(params: FeedbackGenerationParams) {
     .join("\n");
 
   const prompt = `
+あなたは教育に詳しいプロの家庭教師です。
+
 あなたは日本のオンライン家庭教師です。
 
 生徒: ${studentName}
@@ -41,20 +39,19 @@ ${attendanceSummary || "（記録なし）"}
 ${JSON.stringify(grades)}
 
 保護者向けに、以下を含む日本語フィードバックを作成してください。
+出力はフィードバックの内容のみとしてください。
 - 学習状況の要約（出席状況と授業メモの内容を反映すること）
 - 強みと課題
 - 次回以降の学習提案
   `.trim();
 
-  const res = await client.chat.completions.create({
-    model: "gpt-4o-mini",
-    max_tokens: maxTokens,
-    messages: [
-      { role: "system", content: "あなたは教育に詳しいプロの家庭教師です。" },
-      { role: "user", content: prompt },
-    ],
+  const response = await client.models.generateContent({
+    model: "gemini-2.0-flash",
+    contents: prompt,
+    config: {
+      maxOutputTokens: maxTokens,
+    },
   });
 
-  return res.choices[0]?.message?.content ?? "";
+  return response.text ?? "";
 }
-
